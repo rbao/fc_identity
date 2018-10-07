@@ -13,11 +13,25 @@ defmodule FCIdentity.MemoryStore do
     end)
   end
 
-  def put(record, _ \\ []) do
+  def put(record, opts \\ [])
+
+  def put(record, allow_overwrite: false) do
+    if get(record.key) do
+      {:error, :key_already_exist}
+    else
+      Agent.update(__MODULE__, fn(table) ->
+        Map.put(table, record[:key], record)
+      end)
+
+      {:ok, record}
+    end
+  end
+
+  def put(record, _) do
     Agent.update(__MODULE__, fn(table) ->
       Map.put(table, record[:key], record)
     end)
 
-    :ok
+    {:ok, record}
   end
 end

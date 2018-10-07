@@ -18,6 +18,7 @@ defmodule FCIdentity.UserHandler do
   def handle(%{user_id: nil}, %AddUser{} = cmd) do
     cmd
     |> trim_strings()
+    # |> downcase_strings([:username, :email]) # TODO: impl this
     |> put_name()
     |> validate(name: [presence: true])
     ~> to_event(%UserAdded{type: cmd._type_})

@@ -9,6 +9,7 @@ defmodule FCIdentity.Supervisor do
     children = [
       # Event Handler
       {FCIdentity.RoleKeeper, [start_from: :current]},
+      {FCIdentity.UsernameKeeper, [start_from: :current]},
 
       # Process Manager
       {FCIdentity.UserRegistration, [start_from: :current]}

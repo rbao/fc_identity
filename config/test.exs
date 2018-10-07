@@ -9,6 +9,8 @@ config :eventstore, EventStore.Storage,
   hostname: "localhost",
   pool_size: 10
 
-# config :commanded, default_consistency: :strong
+config :commanded, default_consistency: :strong
+
+# config :fc_identity, FCIdentity.SimpleStore, FCIdentity.DynamoStore
 
 config :fc_identity, FCIdentity.SimpleStore, FCIdentity.MemoryStore

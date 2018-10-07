@@ -1,6 +1,8 @@
 defmodule FCIdentity.DynamoStore do
   @behaviour FCIdentity.SimpleStore
 
+  use OK.Pipe
+
   alias ExAws.Dynamo
 
   @dynamo_table System.get_env("AWS_DYNAMO_TABLE")
@@ -8,7 +10,7 @@ defmodule FCIdentity.DynamoStore do
   def get(primary_key, _ \\ []) do
     raw_response =
       @dynamo_table
-      |> Dynamo.get_item(primary_key)
+      |> Dynamo.get_item(%{key: primary_key})
       |> ExAws.request!()
 
     parse_response(raw_response["Item"])
@@ -27,11 +29,28 @@ defmodule FCIdentity.DynamoStore do
     end)
   end
 
-  def put(record, _ \\ []) do
+  def put(record, opts \\ [])
+
+  def put(record, allow_overwrite: false) do
+    dynamo_opts = [
+      condition_expression: "attribute_not_exists(#key)",
+      expression_attribute_names: %{"#key" => "key"}
+    ]
+
+    @dynamo_table
+    |> Dynamo.put_item(record, dynamo_opts)
+    |> ExAws.request()
+    |> normalize_error()
+  end
+
+  def put(record, _) do
     @dynamo_table
     |> Dynamo.put_item(record)
     |> ExAws.request!()
 
-    :ok
+    {:ok, record}
   end
+
+  defp normalize_error({:error, {"ConditionalCheckFailedException", _}}), do: {:error, :key_already_exist}
+  defp normalize_error(other), do: other
 end
