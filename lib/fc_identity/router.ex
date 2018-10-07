@@ -12,5 +12,6 @@ defmodule FCIdentity.Router do
   dispatch RegisterUser, to: UserHandler, aggregate: User, identity: :user_id
   dispatch AddUser, to: UserHandler, aggregate: User, identity: :user_id
   dispatch FinishUserRegistration, to: UserHandler, aggregate: User, identity: :user_id
+
   dispatch CreateAccount, to: AccountHandler, aggregate: Account, identity: :account_id
 end

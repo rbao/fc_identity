@@ -7,7 +7,7 @@ defmodule FCIdentity.RoleKeeper do
 
   def handle(%UserAdded{} = event, _metadata) do
     key = generate_key(event.account_id, event.user_id)
-    {:ok, _} = SimpleStore.put(%{key: key, role: "owner"})
+    {:ok, _} = SimpleStore.put(key, %{role: "owner"})
 
     :ok
   end

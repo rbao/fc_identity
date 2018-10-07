@@ -14,14 +14,13 @@ defmodule FCIdentity.UsernameKeeperTest do
 
     :ok = UsernameKeeper.handle(event, %{})
 
-    key = UsernameKeeper.generate_key(event.username)
-    %{key: _} = SimpleStore.get(key)
+    assert UsernameKeeper.exist?(event.username)
   end
 
   test "handle UserAdded when username already exist" do
-    existing_username = Faker.String.base64(12)
+    existing_username = String.downcase(Faker.String.base64(12))
     key = UsernameKeeper.generate_key(existing_username)
-    SimpleStore.put(%{key: key})
+    SimpleStore.put(key, %{})
 
     event = %UserAdded{
       user_id: uuid4(),

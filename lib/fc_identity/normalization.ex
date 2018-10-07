@@ -14,4 +14,18 @@ defmodule FCIdentity.Normalization do
       end
     end)
   end
+
+  def downcase_strings(struct, keys \\ nil) do
+    keys = keys || Map.keys(struct)
+
+    Enum.reduce(keys, struct, fn(k, acc) ->
+      v = Map.get(struct, k)
+
+      if String.valid?(v) do
+        Map.put(acc, k, String.downcase(v))
+      else
+        acc
+      end
+    end)
+  end
 end

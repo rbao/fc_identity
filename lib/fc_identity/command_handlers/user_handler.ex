@@ -6,6 +6,7 @@ defmodule FCIdentity.UserHandler do
   import Comeonin.Argon2
   import FCIdentity.{Support, Validation, Normalization}
 
+  alias FCIdentity.UsernameKeeper
   alias FCIdentity.{RegisterUser, AddUser}
   alias FCIdentity.{UserRegistrationRequested, FinishUserRegistration, UserAdded, UserRegistered}
 
@@ -17,13 +18,14 @@ defmodule FCIdentity.UserHandler do
 
   def handle(%{user_id: nil}, %AddUser{} = cmd) do
     cmd
-    |> trim_strings()
-    # |> downcase_strings([:username, :email]) # TODO: impl this
-    |> put_name()
-    |> validate(name: [presence: true])
-    ~> to_event(%UserAdded{type: cmd._type_})
-    ~> put_password_hash(cmd)
-    |> unwrap_ok()
+    |>  trim_strings()
+    |>  downcase_strings([:username, :email])
+    |>  put_name()
+    |>  validate(name: [presence: true])
+    ~>> validate_username()
+    ~>  to_event(%UserAdded{type: cmd._type_})
+    ~>  put_password_hash(cmd)
+    |>  unwrap_ok()
   end
 
   def handle(_, %AddUser{}), do: {:error, :user_already_exist}
@@ -55,6 +57,14 @@ defmodule FCIdentity.UserHandler do
   defp put_name(cmd) do
     name = String.trim("#{cmd.first_name} #{cmd.last_name}")
     %{cmd | name: name}
+  end
+
+  defp validate_username(cmd) do
+    unless UsernameKeeper.exist?(cmd.username) do
+      {:ok, cmd}
+    else
+      {:error, {:validation_failed, [{:error, :username, :already_exist}]}}
+    end
   end
 
   defp put_password_hash(event, %{password: password}) when byte_size(password) > 0 do

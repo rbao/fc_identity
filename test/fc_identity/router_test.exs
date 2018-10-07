@@ -22,14 +22,14 @@ defmodule FCIdentity.RouterTest do
       end)
 
       assert_receive_event(UserAdded, fn(event) ->
-        assert event.username == cmd.username
+        assert event.username == String.downcase(cmd.username)
         assert event.password_hash
         assert event.email == cmd.email
         assert event.name == cmd.name
       end)
 
       assert_receive_event(UserRegistered, fn(event) ->
-        assert event.username == cmd.username
+        assert event.username == String.downcase(cmd.username)
         assert event.is_term_accepted == cmd.is_term_accepted
         assert event.name == cmd.name
         assert event.email == cmd.email

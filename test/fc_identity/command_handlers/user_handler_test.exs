@@ -1,6 +1,7 @@
 defmodule FCIdentity.UserHandlerTest do
   use FCIdentity.DataCase
 
+  alias FCIdentity.UsernameKeeper
   alias FCIdentity.UserHandler
   alias FCIdentity.UserAdded
   alias FCIdentity.AddUser
@@ -33,9 +34,18 @@ defmodule FCIdentity.UserHandlerTest do
     end
 
     test "when string with extra leading and trailing space given" do
-      cmd = %AddUser{name: "  roy      "}
-      %UserAdded{name: name} = UserHandler.handle(%User{}, cmd)
-      assert name == "roy"
+      cmd = %AddUser{email: "  roY@ExAmPle.cOm      ", name: "test"}
+      %UserAdded{email: email} = UserHandler.handle(%User{}, cmd)
+      assert email == "roy@example.com"
+    end
+
+    test "when given existing username" do
+      username = String.downcase(Faker.String.base64(12))
+      UsernameKeeper.handle(%UserAdded{username: username}, %{})
+
+      cmd = %AddUser{name: Faker.Name.name(), username: username}
+      {:error, {:validation_failed, errors}} = UserHandler.handle(%User{}, cmd)
+      assert has_error(errors, :username, :already_exist)
     end
 
     test "when no password given password_hash should be nil" do
@@ -64,7 +74,7 @@ defmodule FCIdentity.UserHandlerTest do
 
       assert event.user_id == cmd.user_id
       assert event.account_id == cmd.account_id
-      assert event.username == cmd.username
+      assert event.username == String.downcase(cmd.username)
       assert event.email == cmd.email
     end
   end
