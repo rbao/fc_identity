@@ -2,7 +2,6 @@ defmodule FCIdentity.RoleKeeperTest do
   use FCIdentity.DataCase
 
   alias FCIdentity.RoleKeeper
-  alias FCIdentity.SimpleStore
   alias FCIdentity.UserAdded
 
   test "handle UserAdded" do
@@ -10,7 +9,6 @@ defmodule FCIdentity.RoleKeeperTest do
 
     :ok = RoleKeeper.handle(event, %{})
 
-    key = RoleKeeper.generate_key(event.account_id, event.user_id)
-    %{role: "owner"} = SimpleStore.get(key)
+    assert RoleKeeper.get(event.user_id, event.account_id) == "owner"
   end
 end

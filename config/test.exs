@@ -13,6 +13,6 @@ config :eventstore, EventStore.Storage,
 
 # config :commanded, default_consistency: :strong
 
-config :fc_identity, FCIdentity.SimpleStore, FCIdentity.DynamoStore
+# config :fc_identity, FCIdentity.SimpleStore, FCIdentity.DynamoStore
 
-# config :fc_identity, FCIdentity.SimpleStore, FCIdentity.MemoryStore
+config :fc_identity, FCIdentity.SimpleStore, FCIdentity.MemoryStore

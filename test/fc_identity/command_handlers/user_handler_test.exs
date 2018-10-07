@@ -41,7 +41,7 @@ defmodule FCIdentity.UserHandlerTest do
 
     test "when given existing username" do
       username = String.downcase(Faker.String.base64(12))
-      UsernameKeeper.handle(%UserAdded{username: username}, %{})
+      UsernameKeeper.keep(%{type: "standard", username: username})
 
       cmd = %AddUser{name: Faker.Name.name(), username: username}
       {:error, {:validation_failed, errors}} = UserHandler.handle(%User{}, cmd)
