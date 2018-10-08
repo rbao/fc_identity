@@ -5,6 +5,7 @@ defmodule FCIdentity.UserHandler do
 
   import Comeonin.Argon2
   import FCIdentity.{Support, Validation, Normalization}
+  import FCIdentity.UserPolicy
 
   alias FCIdentity.UsernameKeeper
   alias FCIdentity.{RegisterUser, AddUser}
@@ -16,12 +17,13 @@ defmodule FCIdentity.UserHandler do
 
   def handle(_, %RegisterUser{}), do: {:error, :user_already_registered}
 
-  def handle(%{user_id: nil}, %AddUser{} = cmd) do
+  def handle(%{user_id: nil} = state, %AddUser{} = cmd) do
     cmd
-    |>  trim_strings()
-    |>  downcase_strings([:username, :email])
-    |>  put_name()
-    |>  validate(name: [presence: true])
+    |>  authorize(state)
+    ~>  trim_strings()
+    ~>  downcase_strings([:username, :email])
+    ~>  put_name()
+    ~>> validate(name: [presence: true])
     ~>> validate_username()
     ~>  to_event(%UserAdded{type: cmd._type_})
     ~>  put_password_hash(cmd)

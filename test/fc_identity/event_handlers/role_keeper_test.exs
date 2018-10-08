@@ -5,7 +5,7 @@ defmodule FCIdentity.RoleKeeperTest do
   alias FCIdentity.UserAdded
 
   test "handle UserAdded" do
-    event = %UserAdded{user_id: uuid4(), account_id: uuid4()}
+    event = %UserAdded{user_id: uuid4(), account_id: uuid4(), role: "owner"}
 
     :ok = RoleKeeper.handle(event, %{})
 

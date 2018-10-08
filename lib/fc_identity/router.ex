@@ -6,7 +6,7 @@ defmodule FCIdentity.Router do
   alias FCIdentity.{UserHandler, AccountHandler}
 
   middleware FCIdentity.ValidateFormat
-  # middleware FCIdentity.IdentifyRequester
+  middleware FCIdentity.IdentifyRequester
   middleware FCIdentity.GenerateID
 
   dispatch RegisterUser, to: UserHandler, aggregate: User, identity: :user_id

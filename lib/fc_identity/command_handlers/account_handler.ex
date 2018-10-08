@@ -11,7 +11,7 @@ defmodule FCIdentity.AccountHandler do
     struct_merge(%AccountCreated{}, cmd)
   end
 
-  def handle(%Account{account_id: _} = account, %CreateAccount{}) do
+  def handle(%Account{account_id: _}, %CreateAccount{}) do
     {:error, :account_already_exist}
   end
 end

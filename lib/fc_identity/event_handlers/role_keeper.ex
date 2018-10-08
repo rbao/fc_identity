@@ -5,15 +5,25 @@ defmodule FCIdentity.RoleKeeper do
   alias FCIdentity.UserAdded
   alias FCIdentity.SimpleStore
 
-  def handle(%UserAdded{} = event, _metadata), do: keep(event)
+  def handle(%UserAdded{} = event, _metadata) do
+    keep(event.user_id, event.account_id, event.role)
+  end
 
-  def keep(event) do
-    key = generate_key(event.account_id, event.user_id)
-    {:ok, _} = SimpleStore.put(key, %{role: "owner"})
+  @doc """
+  Keep the the role for future use.
+  """
+  @spec keep(String.t(), String.t(), String.t()) :: :ok
+  def keep(user_id, account_id, role) do
+    key = generate_key(account_id, user_id)
+    {:ok, _} = SimpleStore.put(key, %{role: role})
 
     :ok
   end
 
+  @doc """
+  Get the role for a specific user of an account.
+  """
+  @spec get(String.t(), String.t()) :: String.t()
   def get(user_id, account_id) do
     key = generate_key(account_id, user_id)
 
