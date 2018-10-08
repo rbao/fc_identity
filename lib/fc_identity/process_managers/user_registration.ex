@@ -5,15 +5,19 @@ defmodule FCIdentity.UserRegistration do
     router: FCIdentity.Router
 
   import FCIdentity.Support
+  import UUID
+
   alias FCIdentity.{UserRegistrationRequested, UserAdded, AccountCreated, UserRegistered}
   alias FCIdentity.{AddUser, CreateAccount, FinishUserRegistration}
 
   typedstruct do
     field :user_id, String.t()
-    field :account_id, String.t()
+    field :live_account_id, String.t()
+    field :test_account_id, String.t()
     field :is_term_accepted, boolean, default: false
     field :is_user_added, boolean, default: false
-    field :is_account_created, boolean, default: false
+    field :is_live_account_created, boolean, default: false
+    field :is_test_account_created, boolean, default: false
   end
 
   def interested?(%UserRegistrationRequested{user_id: user_id}), do: {:start, user_id}
@@ -23,30 +27,48 @@ defmodule FCIdentity.UserRegistration do
   def interested?(_), do: false
 
   def handle(_, %UserRegistrationRequested{} = event) do
+    live_account_id = uuid4()
+    test_account_id = uuid4()
+
     add_user = %AddUser{
       _type_: "standard",
-      requester_role: :system,
-      account_id: event.default_account_id,
+      requester_role: "system",
+      account_id: live_account_id,
       status: "pending",
       role: "owner"
     }
     add_user = struct_merge(add_user, event)
 
-    create_account = %CreateAccount{
-      account_id: event.default_account_id,
+    create_live_account = %CreateAccount{
+      account_id: live_account_id,
       owner_id: event.user_id,
+      mode: :live,
+      test_account_id: test_account_id,
       name: event.account_name,
       default_locale: event.default_locale
     }
 
-    [create_account, add_user]
+    create_test_account = %CreateAccount{
+      account_id: test_account_id,
+      owner_id: event.user_id,
+      mode: :test,
+      live_account_id: live_account_id,
+      name: event.account_name,
+      default_locale: event.default_locale
+    }
+
+    [create_live_account, create_test_account, add_user]
   end
 
-  def handle(%{is_user_added: true} = state, %AccountCreated{}) do
+  def handle(%{is_user_added: true, is_live_account_created: true} = state, %AccountCreated{mode: "test"}) do
     %FinishUserRegistration{user_id: state.user_id, is_term_accepted: state.is_term_accepted}
   end
 
-  def handle(%{is_account_created: true} = state, %UserAdded{} = event) do
+  def handle(%{is_user_added: true, is_test_account_created: true} = state, %AccountCreated{mode: "live"}) do
+    %FinishUserRegistration{user_id: state.user_id, is_term_accepted: state.is_term_accepted}
+  end
+
+  def handle(%{is_live_account_created: true, is_test_account_created: true} = state, %UserAdded{} = event) do
     %FinishUserRegistration{user_id: event.user_id, is_term_accepted: state.is_term_accepted}
   end
 
@@ -58,7 +80,11 @@ defmodule FCIdentity.UserRegistration do
     %{state | is_user_added: true, user_id: event.user_id}
   end
 
-  def apply(%{is_account_created: false} = state, %AccountCreated{} = event) do
-    %{state | is_account_created: true, account_id: event.account_id}
+  def apply(%{is_live_account_created: false} = state, %AccountCreated{mode: "live"} = event) do
+    %{state | is_live_account_created: true, live_account_id: event.account_id}
+  end
+
+  def apply(%{is_test_account_created: false} = state, %AccountCreated{mode: "test"} = event) do
+    %{state | is_test_account_created: true, test_account_id: event.account_id}
   end
 end

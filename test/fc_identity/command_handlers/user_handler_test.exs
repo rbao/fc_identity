@@ -9,15 +9,14 @@ defmodule FCIdentity.UserHandlerTest do
 
   describe "handle AddUser" do
     setup do
-      %{cmd: %AddUser{requester_role: :sysdev}}
+      %{cmd: %AddUser{requester_role: "sysdev"}}
     end
 
     test "when requester is not permitted" do
-      cmd = %AddUser{requester_role: :customer}
+      cmd = %AddUser{requester_role: "customer"}
 
       {:error, :access_denied} = UserHandler.handle(%User{}, cmd)
     end
-
 
     test "when none of first name, last name or name is given should return validation error", %{cmd: cmd} do
       {:error, {:validation_failed, errors}} = UserHandler.handle(%User{}, cmd)

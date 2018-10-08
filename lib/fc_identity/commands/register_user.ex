@@ -4,7 +4,6 @@ defmodule FCIdentity.RegisterUser do
 
   typedstruct do
     field :user_id, String.t()
-    field :default_account_id, String.t()
 
     field :username, String.t(), default: ""
     field :password, String.t(), default: ""

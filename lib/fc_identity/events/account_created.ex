@@ -9,6 +9,10 @@ defmodule FCIdentity.AccountCreated do
     field :account_id, String.t()
     field :owner_id, String.t()
 
+    field :mode, String.t()
+    field :live_account_id, String.t()
+    field :test_account_id, String.t()
+
     field :name, String.t()
     field :default_locale, String.t()
   end

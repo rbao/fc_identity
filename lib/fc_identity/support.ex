@@ -8,7 +8,7 @@ defmodule FCIdentity.Support do
     struct(dest, filtered_src)
   end
 
-  # Generate uuid for keys of struct ends in `id`
+  # Generate uuid for keys of struct ends in `id_`
   def generate_ids(struct, keys \\ nil) do
     keys = keys || Enum.filter(Map.keys(struct), fn(key) ->
       sk = Atom.to_string(key)

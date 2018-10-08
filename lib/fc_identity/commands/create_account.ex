@@ -6,6 +6,10 @@ defmodule FCIdentity.CreateAccount do
     field :account_id, String.t()
     field :owner_id, String.t()
 
+    field :mode, String.t(), default: "live"
+    field :live_account_id, String.t()
+    field :test_account_id, String.t()
+
     field :name, String.t(), default: "Unamed Account"
     field :default_locale, String.t(), default: "en"
 

@@ -6,6 +6,7 @@ defmodule FCIdentity.RouterTest do
   alias FCIdentity.{UserAdded, AccountCreated, UserRegistered}
 
   describe "dispatch RegisterUser" do
+    @tag :focus
     test "with valid command" do
       cmd = %RegisterUser{
         username: Faker.String.base64(8),
@@ -16,10 +17,21 @@ defmodule FCIdentity.RouterTest do
       }
       :ok = Router.dispatch(cmd)
 
-      assert_receive_event(AccountCreated, fn(event) ->
-        assert event.name == "Unamed Account"
-        assert event.default_locale == "en"
-      end)
+      assert_receive_event(AccountCreated,
+        fn(event) -> event.mode == "live" end,
+        fn(event) ->
+          assert event.name == "Unamed Account"
+          assert event.default_locale == "en"
+        end
+      )
+
+      assert_receive_event(AccountCreated,
+        fn(event) -> event.mode == "test" end,
+        fn(event) ->
+          assert event.name == "Unamed Account"
+          assert event.default_locale == "en"
+        end
+      )
 
       assert_receive_event(UserAdded, fn(event) ->
         assert event.username == String.downcase(cmd.username)
@@ -30,6 +42,7 @@ defmodule FCIdentity.RouterTest do
 
       assert_receive_event(UserRegistered, fn(event) ->
         assert event.username == String.downcase(cmd.username)
+        assert event.default_account_id
         assert event.is_term_accepted == cmd.is_term_accepted
         assert event.name == cmd.name
         assert event.email == cmd.email

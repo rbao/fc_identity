@@ -7,7 +7,6 @@ defmodule FCIdentity.UserRegistrationRequested do
     field :__version__, integer(), default: @version
 
     field :user_id, String.t()
-    field :default_account_id, String.t()
 
     field :username, String.t()
     field :password, String.t()
