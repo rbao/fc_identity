@@ -42,7 +42,7 @@ defmodule FCIdentity.UserRegistration do
     create_live_account = %CreateAccount{
       account_id: live_account_id,
       owner_id: event.user_id,
-      mode: :live,
+      mode: "live",
       test_account_id: test_account_id,
       name: event.account_name,
       default_locale: event.default_locale
@@ -51,7 +51,7 @@ defmodule FCIdentity.UserRegistration do
     create_test_account = %CreateAccount{
       account_id: test_account_id,
       owner_id: event.user_id,
-      mode: :test,
+      mode: "test",
       live_account_id: live_account_id,
       name: event.account_name,
       default_locale: event.default_locale

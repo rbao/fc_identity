@@ -7,7 +7,7 @@ defmodule FCIdentity.AccountHandler do
   alias FCIdentity.{AccountCreated}
   alias FCIdentity.Account
 
-  def handle(%Account{account_id: nil}, %CreateAccount{mode: mode} = cmd) do
+  def handle(%Account{account_id: nil}, %CreateAccount{} = cmd) do
     struct_merge(%AccountCreated{}, cmd)
   end
 
