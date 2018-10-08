@@ -9,9 +9,11 @@ defmodule FCIdentity.Router do
   middleware FCIdentity.IdentifyRequester
   middleware FCIdentity.GenerateID
 
-  dispatch RegisterUser, to: UserHandler, aggregate: User, identity: :user_id
-  dispatch AddUser, to: UserHandler, aggregate: User, identity: :user_id
-  dispatch FinishUserRegistration, to: UserHandler, aggregate: User, identity: :user_id
+  identify User, by: :user_id, prefix: "user-"
+  identify Account, by: :account_id, prefix: "account-"
 
-  dispatch CreateAccount, to: AccountHandler, aggregate: Account, identity: :account_id
+  dispatch [RegisterUser, AddUser, FinishUserRegistration],
+    to: UserHandler, aggregate: User
+
+  dispatch CreateAccount, to: AccountHandler, aggregate: Account
 end

@@ -39,7 +39,7 @@ defmodule FCIdentity.MixProject do
       {:comeonin, "~> 4.0"},
       {:argon2_elixir, "~> 1.3"},
       {:ok, "~> 2.0"},
-      {:faker, "~> 0.11", only: :test},
+      {:faker, "~> 0.11", only: [:test, :dev]},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},

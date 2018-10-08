@@ -16,7 +16,7 @@ defmodule FCIdentity.UserTest do
 
     user = User.apply(%User{}, event)
 
-    assert user.user_id == event.user_id
+    assert user.id == event.user_id
     assert user.account_id == event.account_id
     assert user.username == event.username
     assert user.email == event.email

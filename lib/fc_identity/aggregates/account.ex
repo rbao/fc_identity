@@ -6,7 +6,7 @@ defmodule FCIdentity.Account do
   alias FCIdentity.AccountCreated
 
   typedstruct do
-    field :account_id, String.t()
+    field :id, String.t()
     field :owner_id, String.t()
 
     field :mode, String.t(), default: "live"
@@ -18,7 +18,7 @@ defmodule FCIdentity.Account do
   end
 
   def apply(%__MODULE__{} = state, %AccountCreated{} = event) do
-    %__MODULE__{state | account_id: event.account_id}
+    %__MODULE__{state | id: event.account_id}
     |> struct_merge(event)
   end
 end

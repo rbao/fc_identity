@@ -5,7 +5,7 @@ defmodule FCIdentity.User do
   alias FCIdentity.{UserRegistrationRequested, UserAdded, UserRegistered}
 
   typedstruct do
-    field :user_id, String.t()
+    field :id, String.t()
     field :account_id, String.t()
     field :default_account_id, String.t()
 
@@ -23,7 +23,7 @@ defmodule FCIdentity.User do
   def apply(state, %UserRegistrationRequested{}), do: state
 
   def apply(state, %UserAdded{} = event) do
-    %{state | user_id: event.user_id}
+    %{state | id: event.user_id}
     |> struct_merge(event)
   end
 

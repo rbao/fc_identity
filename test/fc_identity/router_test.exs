@@ -6,7 +6,6 @@ defmodule FCIdentity.RouterTest do
   alias FCIdentity.{UserAdded, AccountCreated, UserRegistered}
 
   describe "dispatch RegisterUser" do
-    @tag :focus
     test "with valid command" do
       cmd = %RegisterUser{
         username: Faker.String.base64(8),

@@ -7,11 +7,11 @@ defmodule FCIdentity.AccountHandler do
   alias FCIdentity.{AccountCreated}
   alias FCIdentity.Account
 
-  def handle(%Account{account_id: nil}, %CreateAccount{} = cmd) do
+  def handle(%Account{id: nil}, %CreateAccount{} = cmd) do
     struct_merge(%AccountCreated{}, cmd)
   end
 
-  def handle(%Account{account_id: _}, %CreateAccount{}) do
+  def handle(%Account{id: _}, %CreateAccount{}) do
     {:error, :account_already_exist}
   end
 end
