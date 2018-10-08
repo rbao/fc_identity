@@ -1,5 +1,5 @@
 defmodule FCIdentity.UserTest do
-  use FCIdentity.DataCase
+  use FCIdentity.UnitCase, async: true
 
   alias FCIdentity.User
   alias FCIdentity.UserAdded

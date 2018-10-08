@@ -1,13 +1,15 @@
 defmodule FCIdentity.Router do
   use Commanded.Commands.Router
 
+  alias FCIdentity.{RegisterUser, FinishUserRegistration, AddUser}
+  alias FCIdentity.{CreateAccount, UpdateAccountInfo}
+
   alias FCIdentity.{User, Account}
-  alias FCIdentity.{RegisterUser, FinishUserRegistration, AddUser, CreateAccount}
   alias FCIdentity.{UserHandler, AccountHandler}
 
-  middleware FCIdentity.ValidateFormat
-  middleware FCIdentity.IdentifyRequester
-  middleware FCIdentity.GenerateID
+  middleware FCIdentity.CommandValidation
+  middleware FCIdentity.RequesterIdentification
+  middleware FCIdentity.IdentifierGeneration
 
   identify User, by: :user_id, prefix: "user-"
   identify Account, by: :account_id, prefix: "account-"
@@ -15,5 +17,6 @@ defmodule FCIdentity.Router do
   dispatch [RegisterUser, AddUser, FinishUserRegistration],
     to: UserHandler, aggregate: User
 
-  dispatch CreateAccount, to: AccountHandler, aggregate: Account
+  dispatch [CreateAccount, UpdateAccountInfo],
+    to: AccountHandler, aggregate: Account
 end

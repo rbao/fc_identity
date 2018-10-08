@@ -1,8 +1,8 @@
 defmodule FCIdentity.RouterTest do
-  use FCIdentity.DataCase
+  use FCIdentity.RouterCase, async: true
 
   alias FCIdentity.Router
-  alias FCIdentity.RegisterUser
+  alias FCIdentity.{RegisterUser}
   alias FCIdentity.{UserAdded, AccountCreated, UserRegistered}
 
   describe "dispatch RegisterUser" do
@@ -48,4 +48,14 @@ defmodule FCIdentity.RouterTest do
       end)
     end
   end
+
+  # describe "dispatch UpdateAccountInfo" do
+  #   test "with valid command" do
+  #     cmd = %UpdateAccountInfo{
+  #       effective_keys: [:name],
+  #       name: Faker.Company.name()
+  #     }
+  #     :ok = Router.dispatch(cmd)
+  #   end
+  # end
 end

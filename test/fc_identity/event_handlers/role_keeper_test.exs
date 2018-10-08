@@ -1,5 +1,5 @@
 defmodule FCIdentity.RoleKeeperTest do
-  use FCIdentity.DataCase
+  use FCIdentity.UnitCase, async: true
 
   alias FCIdentity.RoleKeeper
   alias FCIdentity.UserAdded

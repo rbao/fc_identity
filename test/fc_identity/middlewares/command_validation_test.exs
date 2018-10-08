@@ -1,0 +1,3 @@
+defmodule FCIdentity.CommandValidationTest do
+
+end

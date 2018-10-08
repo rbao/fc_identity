@@ -13,7 +13,7 @@ defmodule FCIdentity.CreateAccount do
     field :name, String.t(), default: "Unamed Account"
     field :default_locale, String.t(), default: "en"
 
-    validates :owner_id, presence: true
+    validates :owner_id, presence: true, uuid: true
     validates :name, presence: true
     validates :default_locale, presence: true
   end

@@ -1,5 +1,5 @@
 defmodule FCIdentity.UsernameKeeperTest do
-  use FCIdentity.DataCase
+  use FCIdentity.UnitCase, async: true
 
   alias FCIdentity.UsernameKeeper
   alias FCIdentity.UserAdded

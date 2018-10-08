@@ -22,7 +22,7 @@ defmodule FCIdentity.AddUser do
 
     @email_regex Application.get_env(:fc_identity, :email_regex)
 
-    validates :account_id, presence: true
+    validates :account_id, presence: true, uuid: true
 
     validates :_type_, presence: true, inclusion: ["standard", "managed"]
     validates :status, presence: true, inclusion: ["pending", "active"]
