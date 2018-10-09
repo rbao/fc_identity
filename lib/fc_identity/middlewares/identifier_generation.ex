@@ -3,7 +3,11 @@ defmodule FCIdentity.IdentifierGeneration do
 
   alias Commanded.Middleware.Pipeline
 
-  def before_dispatch(%Pipeline{command: cmd, identity: identity} = pipeline) do
+  def before_dispatch(%Pipeline{} = pipeline) do
+    generate(pipeline)
+  end
+
+  def generate(%{command: cmd, identity: identity} = pipeline) do
     identity_value = Map.get(cmd, identity)
 
     if is_nil(identity_value) do
