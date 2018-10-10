@@ -1,4 +1,4 @@
-defmodule FCIdentity.RemoveUser do
+defmodule FCIdentity.DeleteUser do
   use TypedStruct
   use Vex.Struct
 

@@ -8,13 +8,13 @@ defmodule FCIdentity.UserHandler do
   import FCIdentity.UserPolicy
 
   alias FCIdentity.UsernameKeeper
-  alias FCIdentity.{RegisterUser, AddUser, RemoveUser}
+  alias FCIdentity.{RegisterUser, AddUser, DeleteUser}
   alias FCIdentity.{
     UserRegistrationRequested,
     FinishUserRegistration,
     UserAdded,
     UserRegistered,
-    UserRemoved
+    UserDeleted
   }
 
   def handle(%{id: nil} = state, %RegisterUser{} = cmd) do
@@ -57,10 +57,10 @@ defmodule FCIdentity.UserHandler do
     }
   end
 
-  def handle(state, %RemoveUser{} = cmd) do
+  def handle(state, %DeleteUser{} = cmd) do
     cmd
     |> authorize(state)
-    ~> merge_to(%UserRemoved{})
+    ~> merge_to(%UserDeleted{})
     |> unwrap_ok()
   end
 

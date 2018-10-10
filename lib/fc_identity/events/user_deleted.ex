@@ -1,4 +1,4 @@
-defmodule FCIdentity.UserRemoved do
+defmodule FCIdentity.UserDeleted do
   use TypedStruct
 
   @version 1

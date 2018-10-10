@@ -6,7 +6,7 @@ defmodule FCIdentity.User do
     UserRegistrationRequested,
     UserAdded,
     UserRegistered,
-    UserRemoved
+    UserDeleted
   }
 
   typedstruct do
@@ -36,7 +36,7 @@ defmodule FCIdentity.User do
     %{state | status: "active", default_account_id: event.default_account_id}
   end
 
-  def apply(state, %UserRemoved{}) do
+  def apply(state, %UserDeleted{}) do
     %{state | status: "removed"}
   end
 end

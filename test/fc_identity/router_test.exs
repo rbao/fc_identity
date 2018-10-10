@@ -3,9 +3,9 @@ defmodule FCIdentity.RouterTest do
 
   alias FCIdentity.Router
   alias FCIdentity.RoleKeeper
-  alias FCIdentity.{RegisterUser, RemoveUser, UpdateAccountInfo}
+  alias FCIdentity.{RegisterUser, DeleteUser, UpdateAccountInfo}
   alias FCIdentity.{AccountCreated, AccountInfoUpdated}
-  alias FCIdentity.{UserRegistered, UserAdded, UserRemoved}
+  alias FCIdentity.{UserRegistered, UserAdded, UserDeleted}
 
   describe "dispatch RegisterUser" do
     test "with valid command" do
@@ -51,9 +51,9 @@ defmodule FCIdentity.RouterTest do
     end
   end
 
-  describe "dispatch RemoveUser" do
+  describe "dispatch DeleteUser" do
     test "with non existing user id" do
-      cmd = %RemoveUser{
+      cmd = %DeleteUser{
         account_id: uuid4(),
         user_id: uuid4()
       }
@@ -75,7 +75,7 @@ defmodule FCIdentity.RouterTest do
       }
       append_to_stream("user-" <> user_id, [event1])
 
-      cmd = %RemoveUser{
+      cmd = %DeleteUser{
         requester_id: requester_id,
         account_id: account_id,
         user_id: user_id
@@ -83,7 +83,7 @@ defmodule FCIdentity.RouterTest do
 
       :ok = Router.dispatch(cmd)
 
-      assert_receive_event(UserRemoved, fn(event) ->
+      assert_receive_event(UserDeleted, fn(event) ->
         assert event.user_id == cmd.user_id
       end)
     end
