@@ -10,6 +10,7 @@ defmodule FCIdentity.Supervisor do
       # Event Handler
       {FCIdentity.RoleKeeper, [start_from: :current]},
       {FCIdentity.UsernameKeeper, [start_from: :current]},
+      {FCIdentity.TypeKeeper, [start_from: :current]},
 
       # Process Manager
       {FCIdentity.UserRegistration, [start_from: :current]}

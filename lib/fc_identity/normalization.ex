@@ -15,6 +15,12 @@ defmodule FCIdentity.Normalization do
     end)
   end
 
+  @doc """
+  Downcase values of the given keys in the struct. Non-string values will be
+  safely ignored.
+
+  If `keys` not provided, defaults to all keys of the given `struct`.
+  """
   def downcase_strings(struct, keys \\ nil) do
     keys = keys || Map.keys(struct)
 

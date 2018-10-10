@@ -1,7 +1,7 @@
 defmodule FCIdentity.RequesterIdentificationTest do
   use FCIdentity.UnitCase, async: true
 
-  alias FCIdentity.RoleKeeper
+  alias FCIdentity.{TypeKeeper, RoleKeeper}
   alias FCIdentity.RequesterIdentification
   alias FCIdentity.DummyCommand
 
@@ -31,6 +31,7 @@ defmodule FCIdentity.RequesterIdentificationTest do
       user_id = uuid4()
       account_id = uuid4()
       RoleKeeper.keep(user_id, account_id, "developer")
+      TypeKeeper.keep(user_id, "standard")
 
       original_cmd = %DummyCommand{
         requester_id: user_id,
@@ -40,6 +41,7 @@ defmodule FCIdentity.RequesterIdentificationTest do
       cmd = RequesterIdentification.identify(original_cmd)
 
       assert cmd.requester_role == "developer"
+      assert cmd.requester_type == "standard"
     end
   end
 end

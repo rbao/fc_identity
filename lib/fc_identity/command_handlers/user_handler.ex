@@ -11,11 +11,14 @@ defmodule FCIdentity.UserHandler do
   alias FCIdentity.{RegisterUser, AddUser}
   alias FCIdentity.{UserRegistrationRequested, FinishUserRegistration, UserAdded, UserRegistered}
 
-  def handle(%{id: nil}, %RegisterUser{} = cmd) do
-    struct_merge(%UserRegistrationRequested{}, cmd)
+  def handle(%{id: nil} = state, %RegisterUser{} = cmd) do
+    cmd
+    |> authorize(state)
+    ~> merge_to(%UserRegistrationRequested{})
+    |> unwrap_ok()
   end
 
-  def handle(_, %RegisterUser{}), do: {:error, :user_already_registered}
+  def handle(_, %RegisterUser{}), do: {:error, {:already_registered, :user}}
 
   def handle(%{id: nil} = state, %AddUser{} = cmd) do
     cmd
@@ -25,14 +28,14 @@ defmodule FCIdentity.UserHandler do
     ~>  put_name()
     ~>> validate(name: [presence: true])
     ~>> validate_username()
-    ~>  to_event(%UserAdded{type: cmd._type_})
+    ~>  merge_to(%UserAdded{type: cmd._type_})
     ~>  put_password_hash(cmd)
     |>  unwrap_ok()
   end
 
-  def handle(_, %AddUser{}), do: {:error, :user_already_exist}
+  def handle(_, %AddUser{}), do: {:error, {:already_exist, :user}}
 
-  def handle(%{id: nil}, %FinishUserRegistration{}), do: {:error, :user_not_found}
+  def handle(%{id: nil}, %FinishUserRegistration{}), do: {:error, {:not_found, :user}}
 
   def handle(%{id: user_id} = state, %FinishUserRegistration{} = event) do
     %UserRegistered{
@@ -46,10 +49,6 @@ defmodule FCIdentity.UserHandler do
       last_name: state.last_name,
       name: state.name
     }
-  end
-
-  defp to_event(cmd, event) do
-    struct_merge(event, cmd)
   end
 
   defp put_name(%{name: name} = cmd) when byte_size(name) > 0 do

@@ -10,7 +10,7 @@ defmodule FCIdentity.RoleKeeper do
   end
 
   @doc """
-  Keep the the role for future use.
+  Keep the role for future use.
   """
   @spec keep(String.t(), String.t(), String.t()) :: :ok
   def keep(user_id, account_id, role) do
@@ -34,6 +34,6 @@ defmodule FCIdentity.RoleKeeper do
   end
 
   defp generate_key(account_id, user_id) do
-    "role::#{account_id}:#{user_id}"
+    "fc_identity/role/#{account_id}/#{user_id}"
   end
 end

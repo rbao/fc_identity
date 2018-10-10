@@ -8,7 +8,8 @@ defmodule FCIdentity.MixProject do
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      docs: docs()
     ]
   end
 
@@ -43,6 +44,42 @@ defmodule FCIdentity.MixProject do
       {:ex_doc, "~> 0.19", only: :dev, runtime: false}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
+    ]
+  end
+
+  defp docs do
+    [
+      source_url: "https://github.com/rbao/fc_identity",
+      groups_for_modules: groups_for_modules()
+    ]
+  end
+
+  defp groups_for_modules do
+    [
+      "Commands": [
+        FCIdentity.RegisterUser,
+        FCIdentity.AddUser,
+        FCIdentity.FinishUserRegistration,
+
+        FCIdentity.CreateAccount,
+        FCIdentity.UpdateAccountInfo
+      ],
+
+      "Events": [
+        FCIdentity.UserAdded,
+        FCIdentity.UserRegistered,
+        FCIdentity.UserRegistrationRequested,
+        FCIdentity.AccountCreated,
+        FCIdentity.AccountInfoUpdated,
+      ],
+
+      "Support": [
+        FCIdentity.Changeset,
+        FCIdentity.Normalization,
+        FCIdentity.Translation,
+        FCIdentity.Validation,
+        FCIdentity.Support
+      ]
     ]
   end
 end

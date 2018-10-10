@@ -47,10 +47,10 @@ defmodule FCIdentity.UsernameKeeper do
   end
 
   defp generate_key(%{type: "standard", username: username}) do
-    "username::#{username}"
+    "fc_identity/username/#{username}"
   end
 
   defp generate_key(%{type: "managed", account_id: account_id, username: username}) do
-    "username::#{account_id}:#{username}"
+    "fc_identity/username/#{account_id}/#{username}"
   end
 end

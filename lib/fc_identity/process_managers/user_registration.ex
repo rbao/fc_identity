@@ -31,8 +31,9 @@ defmodule FCIdentity.UserRegistration do
     test_account_id = uuid4()
 
     add_user = %AddUser{
-      _type_: "standard",
       requester_role: "system",
+      _type_: "standard",
+
       account_id: live_account_id,
       status: "pending",
       role: "owner"
@@ -40,6 +41,7 @@ defmodule FCIdentity.UserRegistration do
     add_user = struct_merge(add_user, event)
 
     create_live_account = %CreateAccount{
+      requester_role: "system",
       account_id: live_account_id,
       owner_id: event.user_id,
       mode: "live",
@@ -49,6 +51,7 @@ defmodule FCIdentity.UserRegistration do
     }
 
     create_test_account = %CreateAccount{
+      requester_role: "system",
       account_id: test_account_id,
       owner_id: event.user_id,
       mode: "test",

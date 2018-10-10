@@ -2,8 +2,10 @@ defmodule FCIdentity.RouterTest do
   use FCIdentity.RouterCase, async: true
 
   alias FCIdentity.Router
-  alias FCIdentity.{RegisterUser}
-  alias FCIdentity.{UserAdded, AccountCreated, UserRegistered}
+  alias FCIdentity.RoleKeeper
+  alias FCIdentity.{RegisterUser, UpdateAccountInfo}
+  alias FCIdentity.{AccountCreated, AccountInfoUpdated}
+  alias FCIdentity.{UserRegistered, UserAdded}
 
   describe "dispatch RegisterUser" do
     test "with valid command" do
@@ -49,13 +51,65 @@ defmodule FCIdentity.RouterTest do
     end
   end
 
-  # describe "dispatch UpdateAccountInfo" do
-  #   test "with valid command" do
-  #     cmd = %UpdateAccountInfo{
-  #       effective_keys: [:name],
-  #       name: Faker.Company.name()
-  #     }
-  #     :ok = Router.dispatch(cmd)
-  #   end
-  # end
+  describe "dispatch UpdateAccountInfo" do
+    test "with invalid command" do
+      cmd = %UpdateAccountInfo{
+        effective_keys: [:name]
+      }
+
+      {:error, {:validation_failed, _}} = Router.dispatch(cmd)
+    end
+
+    test "with non existing account id" do
+      cmd = %UpdateAccountInfo{
+        account_id: uuid4(),
+        effective_keys: [:name],
+        name: Faker.Company.name()
+      }
+
+      {:error, {:not_found, :account}} = Router.dispatch(cmd)
+    end
+
+    test "with valid command" do
+      live_account_id = uuid4()
+      test_account_id = uuid4()
+      user_id = uuid4()
+
+      event1 = %AccountCreated{
+        account_id: live_account_id,
+        owner_id: user_id,
+        mode: "live",
+        test_account_id: test_account_id,
+        name: Faker.Company.name(),
+        default_locale: "en"
+      }
+
+      event2 = %AccountCreated{
+        account_id: test_account_id,
+        owner_id: user_id,
+        mode: "test",
+        live_account_id: live_account_id,
+        name: event1.name,
+        default_locale: "en"
+      }
+
+      append_to_stream("account-" <> live_account_id, [event1])
+      append_to_stream("account-" <> test_account_id, [event2])
+
+      RoleKeeper.keep(user_id, live_account_id, "administrator")
+
+      cmd = %UpdateAccountInfo{
+        requester_id: user_id,
+        account_id: live_account_id,
+        effective_keys: [:name],
+        name: Faker.Company.name()
+      }
+
+      :ok = Router.dispatch(cmd)
+
+      assert_receive_event(AccountInfoUpdated, fn(event) ->
+        assert event.name == cmd.name
+      end)
+    end
+  end
 end

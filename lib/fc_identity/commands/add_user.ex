@@ -4,6 +4,7 @@ defmodule FCIdentity.AddUser do
 
   typedstruct do
     field :requester_id, String.t()
+    field :requester_type, String.t()
     field :requester_role, String.t()
     field :account_id, String.t()
 

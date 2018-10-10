@@ -9,5 +9,9 @@ defmodule FCIdentity.UserPolicy do
     {:ok, cmd}
   end
 
+  def authorize(%RegisterUser{} = cmd, _) do
+    {:ok, cmd}
+  end
+
   def authorize(_, _), do: {:error, :access_denied}
 end

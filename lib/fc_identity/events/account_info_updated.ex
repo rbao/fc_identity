@@ -1,14 +1,17 @@
-defmodule FCIdentity.UpdateAccountInfo do
+defmodule FCIdentity.AccountInfoUpdated do
   use TypedStruct
-  use Vex.Struct
+
+  @version 1
 
   typedstruct do
+    field :__version__, integer(), default: @version
+
     field :requester_id, String.t()
     field :requester_type, String.t()
     field :requester_role, String.t()
     field :account_id, String.t()
 
-    field :effective_keys, [atom], default: []
+    field :effective_keys, [atom]
     field :locale, String.t()
 
     field :name, String.t()
@@ -20,12 +23,5 @@ defmodule FCIdentity.UpdateAccountInfo do
     field :caption, String.t()
     field :description, String.t()
     field :custom_data, map
-
-    @email_regex Application.get_env(:fc_identity, :email_regex)
-
-    validates :account_id, presence: true, uuid: true
-    validates :name, presence: true
-    validates :support_email, format: [with: @email_regex, allow_nil: true]
-    validates :tech_email, format: [with: @email_regex, allow_nil: true]
   end
 end
