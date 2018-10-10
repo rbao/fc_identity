@@ -3,9 +3,9 @@ defmodule FCIdentity.RouterTest do
 
   alias FCIdentity.Router
   alias FCIdentity.RoleKeeper
-  alias FCIdentity.{RegisterUser, UpdateAccountInfo}
+  alias FCIdentity.{RegisterUser, RemoveUser, UpdateAccountInfo}
   alias FCIdentity.{AccountCreated, AccountInfoUpdated}
-  alias FCIdentity.{UserRegistered, UserAdded}
+  alias FCIdentity.{UserRegistered, UserAdded, UserRemoved}
 
   describe "dispatch RegisterUser" do
     test "with valid command" do
@@ -47,6 +47,44 @@ defmodule FCIdentity.RouterTest do
         assert event.is_term_accepted == cmd.is_term_accepted
         assert event.name == cmd.name
         assert event.email == cmd.email
+      end)
+    end
+  end
+
+  describe "dispatch RemoveUser" do
+    test "with non existing user id" do
+      cmd = %RemoveUser{
+        account_id: uuid4(),
+        user_id: uuid4()
+      }
+
+      {:error, {:not_found, :user}} = Router.dispatch(cmd)
+    end
+
+    test "with valid command" do
+      requester_id = uuid4()
+      account_id = uuid4()
+      RoleKeeper.keep(requester_id, account_id, "administrator")
+
+      user_id = uuid4()
+      event1 = %UserAdded{
+        account_id: account_id,
+        user_id: user_id,
+        type: "managed",
+        role: "developer"
+      }
+      append_to_stream("user-" <> user_id, [event1])
+
+      cmd = %RemoveUser{
+        requester_id: requester_id,
+        account_id: account_id,
+        user_id: user_id
+      }
+
+      :ok = Router.dispatch(cmd)
+
+      assert_receive_event(UserRemoved, fn(event) ->
+        assert event.user_id == cmd.user_id
       end)
     end
   end

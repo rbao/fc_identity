@@ -11,8 +11,8 @@ defmodule FCIdentity.UserAdded do
     field :requester_role, String.t()
     field :account_id, String.t()
 
-    field :type, String.t()
     field :user_id, String.t()
+    field :type, String.t()
     field :status, String.t()
     field :username, String.t()
     field :password_hash, String.t()

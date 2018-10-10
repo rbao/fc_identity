@@ -1,5 +1,5 @@
 defmodule FCIdentity.UserPolicy do
-  alias FCIdentity.{RegisterUser, AddUser}
+  alias FCIdentity.{RegisterUser, AddUser, RemoveUser}
 
   def authorize(%{requester_role: "sysdev"} = cmd, _), do: {:ok, cmd}
   def authorize(%{requester_role: "system"} = cmd, _), do: {:ok, cmd}
@@ -10,6 +10,10 @@ defmodule FCIdentity.UserPolicy do
   end
 
   def authorize(%RegisterUser{} = cmd, _) do
+    {:ok, cmd}
+  end
+
+  def authorize(%RemoveUser{requester_role: role} = cmd, _) when role in ["owner", "administrator"] do
     {:ok, cmd}
   end
 

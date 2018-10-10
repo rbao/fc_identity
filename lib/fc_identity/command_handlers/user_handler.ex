@@ -8,8 +8,14 @@ defmodule FCIdentity.UserHandler do
   import FCIdentity.UserPolicy
 
   alias FCIdentity.UsernameKeeper
-  alias FCIdentity.{RegisterUser, AddUser}
-  alias FCIdentity.{UserRegistrationRequested, FinishUserRegistration, UserAdded, UserRegistered}
+  alias FCIdentity.{RegisterUser, AddUser, RemoveUser}
+  alias FCIdentity.{
+    UserRegistrationRequested,
+    FinishUserRegistration,
+    UserAdded,
+    UserRegistered,
+    UserRemoved
+  }
 
   def handle(%{id: nil} = state, %RegisterUser{} = cmd) do
     cmd
@@ -35,20 +41,27 @@ defmodule FCIdentity.UserHandler do
 
   def handle(_, %AddUser{}), do: {:error, {:already_exist, :user}}
 
-  def handle(%{id: nil}, %FinishUserRegistration{}), do: {:error, {:not_found, :user}}
+  def handle(%{id: nil}, _), do: {:error, {:not_found, :user}}
 
-  def handle(%{id: user_id} = state, %FinishUserRegistration{} = event) do
+  def handle(%{id: user_id} = state, %FinishUserRegistration{} = cmd) do
     %UserRegistered{
       user_id: user_id,
       default_account_id: state.account_id,
       username: state.username,
       password_hash: state.password_hash,
       email: state.email,
-      is_term_accepted: event.is_term_accepted,
+      is_term_accepted: cmd.is_term_accepted,
       first_name: state.first_name,
       last_name: state.last_name,
       name: state.name
     }
+  end
+
+  def handle(state, %RemoveUser{} = cmd) do
+    cmd
+    |> authorize(state)
+    ~> merge_to(%UserRemoved{})
+    |> unwrap_ok()
   end
 
   defp put_name(%{name: name} = cmd) when byte_size(name) > 0 do

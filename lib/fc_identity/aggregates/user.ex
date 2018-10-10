@@ -2,7 +2,12 @@ defmodule FCIdentity.User do
   use TypedStruct
 
   import FCIdentity.Support, only: [struct_merge: 2]
-  alias FCIdentity.{UserRegistrationRequested, UserAdded, UserRegistered}
+  alias FCIdentity.{
+    UserRegistrationRequested,
+    UserAdded,
+    UserRegistered,
+    UserRemoved
+  }
 
   typedstruct do
     field :id, String.t()
@@ -29,5 +34,9 @@ defmodule FCIdentity.User do
 
   def apply(state, %UserRegistered{} = event) do
     %{state | status: "active", default_account_id: event.default_account_id}
+  end
+
+  def apply(state, %UserRemoved{}) do
+    %{state | status: "removed"}
   end
 end
