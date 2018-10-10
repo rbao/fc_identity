@@ -10,7 +10,7 @@ defmodule FCIdentity.Support do
   def unwrap_ok({:ok, result}), do: result
 
   @spec unwrap_ok(any) :: any
-  def unwrap_ok(other), do: other
+  def unwrap_ok(any), do: any
 
   @doc """
   Merge the `src` struct into the `dest` struct. Keys that are not part of `dest`
